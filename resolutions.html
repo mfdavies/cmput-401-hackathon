@@ -29,21 +29,20 @@
     <!-- Include Data Tables -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
-
 </head>
 
 <body>
-
     <include src="./navbar.html"></include>
 
     <div class="container mt-4">
-        <h1>Welcome to Resolution!</h1>
+        <div class="d-flex align-items-center">
+            <h1 class="me-3">Resolution Manager</h1>
+            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#editResolutionModal">Add
+                New</button>
+        </div>
+        <table id="resolutionTable" class="display"></table>
 
-        <button type="button" class="btn btn-dark" data-bs-toggle="modal"
-            data-bs-target="#editResolutionModal">Add</button>
-        <!-- <button type="button" class="btn btn-dark" onclick="create_resolution('name', 'type', 'start_date', 'end_date')">Dark</button> -->
     </div>
-    <table id="resolutionTable" class="display"></table>
 
 </body>
 
@@ -77,12 +76,28 @@
                         <input type="date" class="form-control" id="InputEndDate" name="endDate">
 
                         <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" onclick="opem_confirm_delete()">Delete
+                                Resolution</button>
                             <button type="submit" class="btn btn-primary">Save changes</button>
                         </div>
                     </div>
                 </div>
             </form>
         </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmDeleteResolutionModal" tabindex="-1"
+    aria-labelledby="confirmDeleteResolutionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteResolutionModalLabel">Confirm Deletion?</h5>
+            </div>
+            <button type="submit" class="btn btn-primary" onclick="close_confirm_delete()">Back</button>
+            <button type="button" class="btn btn-danger" onclick="delete_resolution_from_table()">Delete</button>
+        </div>
+
     </div>
 </div>
 <script>
@@ -159,7 +174,29 @@
         }
     }
 
+    function opem_confirm_delete() {
+        $('#confirmDeleteResolutionModal').modal('show');
+    }
 
+    function close_confirm_delete() {
+        $('#confirmDeleteResolutionModal').modal('hide');
+    }
+
+
+    function delete_resolution_from_table() {
+        console.log(current_resolution_uuid)
+        delete_resolution(current_resolution_uuid);
+        refresh_table()
+
+        $('#confirmDeleteResolutionModal').modal('hide');
+        $('#editResolutionModal').modal('hide');
+    }
+
+    function refresh_table() {
+        resolution_data = get_all_resolutions_as_lists();
+        $('#resolutionTable').dataTable().fnClearTable();
+        $('#resolutionTable').dataTable().fnAddData(resolution_data);
+    }
 
     function saveChanges(event) {
         event.preventDefault()
@@ -175,14 +212,9 @@
         var endDate = inputEndDate.value;
 
         create_resolution(name, type, startDate, endDate, current_resolution_uuid);
-
-        resolution_data = get_all_resolutions_as_lists();
-        $('#resolutionTable').dataTable().fnClearTable();
-        $('#resolutionTable').dataTable().fnAddData(resolution_data);
+        refresh_table()
         $('#editResolutionModal').modal('hide');
     }
-
-
 
     function reset_dates() {
         document.getElementById("InputStartDate").valueAsDate = new Date();;

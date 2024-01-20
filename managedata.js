@@ -18,7 +18,7 @@ function set_resolution(value) {
  * Retrieves all resolutions from the local storage.
  * @returns {Array} An array of resolution objects.
  */
-function get_all_resolutions(){
+function get_all_resolutions() {
     let all = [];
     for (let [key, value] of Object.entries(localStorage)) {
         all.push(JSON.parse(value));
@@ -55,7 +55,7 @@ function get_resolution(key) {
  * @param {Date} end_date - The end date of the resolution.
  * @returns {Object} - The created resolution object.
  */
-function create_resolution(name, type, start_date, end_date, uuid=null) {
+function create_resolution(name, type, start_date, end_date, uuid = null) {
     console.log("Creating resolution");
     if (uuid == null) {
         uuid = this.crypto.randomUUID();
@@ -70,7 +70,7 @@ function create_resolution(name, type, start_date, end_date, uuid=null) {
         uuid: uuid
     };
     localStorage.setItem(resolution.uuid, JSON.stringify(resolution));
-    console.log(get_resolution(resolution.uuid))    
+    console.log(get_resolution(resolution.uuid))
     return resolution;
 }
 /**
@@ -99,4 +99,10 @@ function get_resolution_success(resolution) {
     let success = false;
     // Some logic to determine if the resolution was successful
     return success
+}
+
+
+function delete_resolution(key) {
+    localStorage.removeItem(key);
+    console.log("Deleted resolution with key " + key);
 }
