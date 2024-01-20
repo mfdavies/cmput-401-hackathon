@@ -113,30 +113,36 @@
         });
         toggleEndDate();
 
+
         $('#resolutionTable tbody').on('click', 'tr', function () {
-            var rowData = this.row(this).data();
-            current_resolution_uuid = rowData[6];
+            var row_data = $('#resolutionTable').DataTable().row(this).data();
+            current_resolution_uuid = row_data[6];
+            $('#InputName').val(row_data[0]);
+            $('#InputType').val(row_data[1]);
+            console.log(row_data[2])
+            $('#InputStartDate').val(row_data[2]);
+            $('#InputEndDate').val(row_data[3]);
             $('#editResolutionModal').modal('show');
         });
 
-        $('#myModal').on('shown.bs.modal', function () {
-            let resolution = get_resolution(current_resolution_uuid)
-            $('#InputName').val(resolution.name);
-            $('#InputType').val(resolution.type);
-            $('#InputStartDate').val(resolution.startDate);
-            $('#InputEndDate').val(resolution.endDate);
+        $('#editResolutionModal').on('shown.bs.modal', function () {
+
         })
 
-        $('#myModal').on('hidden.bs.modal', function () {
+        $('#editResolutionModal').on('hidden.bs.modal', function () {
+            $('#resolutionform').each(function () {
+                this.reset();
+                reset_dates();
+            });
             current_resolution_uuid = null;
         })
 
         $('#resolutionform').on('submit', function () {
-        $(this).each(function () {
-            this.reset();
-            reset_dates();
+            $(this).each(function () {
+                this.reset();
+                reset_dates();
+            });
         });
-    });
     });
 
     function toggleEndDate() {
