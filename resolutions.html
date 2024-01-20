@@ -76,7 +76,7 @@
                         <input type="date" class="form-control" id="InputEndDate" name="endDate">
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" onclick="opem_confirm_delete()">Delete
+                            <button type="button" class="btn btn-danger" onclick="open_confirm_delete()" id="deletebutton">Delete
                                 Resolution</button>
                             <button type="submit" class="btn btn-primary">Save changes</button>
                         </div>
@@ -105,7 +105,7 @@
 
 
     $(document).ready(function () {
-        reset_dates();
+        reset_components();
         data = get_all_resolutions_as_lists();
 
         new DataTable('#resolutionTable', {
@@ -138,16 +138,13 @@
             $('#InputStartDate').val(row_data[2]);
             $('#InputEndDate').val(row_data[3]);
             $('#editResolutionModal').modal('show');
+            $('#deletebutton').show();
         });
-
-        $('#editResolutionModal').on('shown.bs.modal', function () {
-
-        })
 
         $('#editResolutionModal').on('hidden.bs.modal', function () {
             $('#resolutionform').each(function () {
                 this.reset();
-                reset_dates();
+                reset_components();
             });
             current_resolution_uuid = null;
         })
@@ -155,7 +152,7 @@
         $('#resolutionform').on('submit', function () {
             $(this).each(function () {
                 this.reset();
-                reset_dates();
+                reset_components();
             });
         });
     });
@@ -174,7 +171,7 @@
         }
     }
 
-    function opem_confirm_delete() {
+    function open_confirm_delete() {
         $('#confirmDeleteResolutionModal').modal('show');
     }
 
@@ -195,7 +192,9 @@
     function refresh_table() {
         resolution_data = get_all_resolutions_as_lists();
         $('#resolutionTable').dataTable().fnClearTable();
-        $('#resolutionTable').dataTable().fnAddData(resolution_data);
+        if (resolution_data.length > 0) {
+            $('#resolutionTable').dataTable().fnAddData(resolution_data);
+        }
     }
 
     function saveChanges(event) {
@@ -216,9 +215,10 @@
         $('#editResolutionModal').modal('hide');
     }
 
-    function reset_dates() {
-        document.getElementById("InputStartDate").valueAsDate = new Date();;
-        document.getElementById("InputEndDate").valueAsDate = new Date();;
+    function reset_components() {
+        $('#deletebutton').hide();
+        document.getElementById("InputStartDate").valueAsDate = new Date();
+        document.getElementById("InputEndDate").valueAsDate = new Date();
     }
 </script>
 
