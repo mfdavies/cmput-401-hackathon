@@ -25,6 +25,11 @@
     <meta name="theme-color" content="#ffffff">
     <script src="https://unpkg.com/htmlincludejs"></script>
     <script src="managedata.js"></script> <!-- Include managedata.js -->
+
+    <!-- Include Data Tables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+
 </head>
 
 <body>
@@ -38,6 +43,8 @@
             data-bs-target="#editResolutionModal">Add</button>
         <!-- <button type="button" class="btn btn-dark" onclick="create_resolution('name', 'type', 'start_date', 'end_date')">Dark</button> -->
     </div>
+    <table id="resolutionTable" class="display"></table>
+
 </body>
 
 
@@ -50,7 +57,7 @@
                 <h5 class="modal-title" id="editResolutionModalLabel">Modal title</h5>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
-            <form onsubmit="saveChanges(event)">
+            <form onsubmit="saveChanges(event)" id="resolutionform">
                 <div class="form-group">
                     <div class="modal-body">
 
@@ -79,8 +86,57 @@
     </div>
 </div>
 <script>
+    let current_resolution_uuid = null;
+
+
     $(document).ready(function () {
+        reset_dates();
+        data = get_all_resolutions_as_lists();
+
+        new DataTable('#resolutionTable', {
+            data: data,
+            columns: [
+                { title: "Name" },
+                { title: "Type" },
+                { title: "Start Date" },
+                { title: "End Date" },
+                { title: "Status" },
+                { title: "Success" },
+                { title: "UUID" }
+            ],
+            columnDefs: [
+                {
+                    target: 6,
+                    visible: false
+                }
+            ]
+        });
         toggleEndDate();
+
+        $('#resolutionTable tbody').on('click', 'tr', function () {
+            var rowData = this.row(this).data();
+            current_resolution_uuid = rowData[6];
+            $('#editResolutionModal').modal('show');
+        });
+
+        $('#myModal').on('shown.bs.modal', function () {
+            let resolution = get_resolution(current_resolution_uuid)
+            $('#InputName').val(resolution.name);
+            $('#InputType').val(resolution.type);
+            $('#InputStartDate').val(resolution.startDate);
+            $('#InputEndDate').val(resolution.endDate);
+        })
+
+        $('#myModal').on('hidden.bs.modal', function () {
+            current_resolution_uuid = null;
+        })
+
+        $('#resolutionform').on('submit', function () {
+        $(this).each(function () {
+            this.reset();
+            reset_dates();
+        });
+    });
     });
 
     function toggleEndDate() {
@@ -97,9 +153,11 @@
         }
     }
 
+
+
     function saveChanges(event) {
         event.preventDefault()
-        // console.(event)
+
         var inputName = document.getElementById("InputName");
         var inputType = document.getElementById("InputType");
         var inputStartDate = document.getElementById("InputStartDate");
@@ -110,8 +168,19 @@
         var startDate = inputStartDate.value;
         var endDate = inputEndDate.value;
 
-        create_resolution(name, type, startDate, endDate);
+        create_resolution(name, type, startDate, endDate, current_resolution_uuid);
+
+        resolution_data = get_all_resolutions_as_lists();
+        $('#resolutionTable').dataTable().fnClearTable();
+        $('#resolutionTable').dataTable().fnAddData(resolution_data);
         $('#editResolutionModal').modal('hide');
+    }
+
+
+
+    function reset_dates() {
+        document.getElementById("InputStartDate").valueAsDate = new Date();;
+        document.getElementById("InputEndDate").valueAsDate = new Date();;
     }
 </script>
 

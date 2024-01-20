@@ -9,7 +9,7 @@ function clear_all_resolutions() {
  * Stores a resolution in the local storage.
  * @param {Object} value - The resolution object to store. It should have a 'uuid' property which will be used as the key.
  */
-function set_resolution (value) {
+function set_resolution(value) {
     let key = value.uuid;
     localStorage.setItem(key, JSON.stringify(value));
 }
@@ -27,21 +27,24 @@ function get_all_resolutions(){
 }
 
 /**
+ * Retrieves all resolutions stored in the localStorage and returns them as lists.
+ * @returns {Array<Array<any>>} An array of arrays containing the resolutions.
+ */
+function get_all_resolutions_as_lists() {
+    let all = [];
+    for (let [key, value] of Object.entries(localStorage)) {
+        all.push(Object.values(JSON.parse(value)));
+    }
+    return all;
+}
+
+/**
  * Retrieves a specific resolution from the local storage.
  * @param {string} key - The key of the resolution to retrieve.
  * @returns {Object} The resolution object associated with the provided key.
  */
 function get_resolution(key) {
     return JSON.parse(localStorage.getItem(key));
-}
-
-/**
- * Stores a resolution in the local storage.
- * @param {Object} value - The resolution object to store. It should have a 'uuid' property which will be used as the key.
- */
-function set_resolution (value) {
-    let key = value.uuid;
-    localStorage.setItem(key, JSON.stringify(value));
 }
 
 /**
@@ -52,23 +55,24 @@ function set_resolution (value) {
  * @param {Date} end_date - The end date of the resolution.
  * @returns {Object} - The created resolution object.
  */
-function create_resolution (name, type, start_date, end_date) {
+function create_resolution(name, type, start_date, end_date, uuid=null) {
     console.log("Creating resolution");
+    if (uuid == null) {
+        uuid = this.crypto.randomUUID();
+    }
     let resolution = {
         name: name,
         type: type,
         start_date: start_date,
         end_date: end_date,
-        uuid: this.crypto.randomUUID()
+        status: '',
+        success: '',
+        uuid: uuid
     };
     localStorage.setItem(resolution.uuid, JSON.stringify(resolution));
-    console.log(get_resolution(resolution.uuid))
-    console.log()
-    console.log(get_all_resolutions())
-    
+    console.log(get_resolution(resolution.uuid))    
     return resolution;
 }
-
 /**
  * Determines the status of a resolution based on its start and end dates.
  * @param {Object} resolution - The resolution object containing start_date and end_date properties.
