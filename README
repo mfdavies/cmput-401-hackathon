@@ -1,3 +1,0 @@
-Run: `python -m http.server -b 127.0.0.42 8000` and access the server on `http://127.0.0.42:8080/`
-
-ALT + SHIFT + F to format HTML Code
