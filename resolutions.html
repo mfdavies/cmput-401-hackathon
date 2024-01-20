@@ -33,7 +33,7 @@
 </body>
 
 
-<!-- Modal -->
+<!-- Edit Info Modal -->
 <div class="modal fade" id="editResolutionModal" tabindex="-1" aria-labelledby="editResolutionModalLabel"
     aria-hidden="true">
     <div class="modal-dialog">
@@ -42,7 +42,7 @@
                 <h5 class="modal-title" id="editResolutionModalLabel">Modal title</h5>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
-            <form>
+            <form onsubmit="saveChanges(event)">
                 <div class="form-group">
                     <div class="modal-body">
 
@@ -50,12 +50,14 @@
                         <input type="text" class="form-control" id="InputName" aria-describedby="nameHelp"
                             placeholder="Enter Resolution Name">
                         <label for="ResolutionType">Type</label>
-                        <select class="form-control" id="InputType"  aria-describedby="typeHelp" onchange="toggleEndDate()">
+                        <select class="form-control" id="InputType" aria-describedby="typeHelp"
+                            onchange="toggleEndDate()">
                             <option>Ongoing</option>
                             <option>Completable</option>
                         </select>
-                        <label for="ResolutionStartDate">Start Date</label>
+                        <label for="ResolutionStartDate" id="StartDateLabel">Start Date</label>
                         <input type="date" class="form-control" id="InputStartDate" name="startDate">
+
                         <label for="ResolutionEndDate" id="EndDateLabel">End Date</label>
                         <input type="date" class="form-control" id="InputEndDate" name="endDate">
 
@@ -69,18 +71,40 @@
     </div>
 </div>
 <script>
+    $(document).ready(function () {
+        toggleEndDate();
+    });
+
     function toggleEndDate() {
         var inputType = document.getElementById("InputType");
-        var endDateLabel = document.getElementById("StartDateLabel");
+        var startDateLabel = document.getElementById("StartDateLabel");
         var inputEndDate = document.getElementById("InputStartDate");
 
         if (inputType.value === "Ongoing") {
-            endDateLabel.style.display = "block";
+            startDateLabel.style.display = "block";
             inputEndDate.style.display = "block";
         } else {
-            endDateLabel.style.display = "none";
+            startDateLabel.style.display = "none";
             inputEndDate.style.display = "none";
         }
     }
+
+    function saveChanges(event) {
+        event.preventDefault()
+        // console.(event)
+        var inputName = document.getElementById("InputName");
+        var inputType = document.getElementById("InputType");
+        var inputStartDate = document.getElementById("InputStartDate");
+        var inputEndDate = document.getElementById("InputEndDate");
+
+        var name = inputName.value;
+        var type = inputType.value;
+        var startDate = inputStartDate.value;
+        var endDate = inputEndDate.value;
+        
+        create_resolution(name, type, startDate, endDate);
+        $('#editResolutionModal').modal('hide');
+    }
 </script>
+
 </html>
