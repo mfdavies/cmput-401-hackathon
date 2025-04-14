@@ -1,4 +1,4 @@
-# This client side web app was devdeloped by 2 people for the CMPUT 401 Hackathon. 
+# This client side web app was developed by 2 people for the CMPUT 401 Hackathon. 
 We spent 1 hour developing the wireframes and around 5 hours on the product:
 ![Wireframes](/wireframes.png)
     
